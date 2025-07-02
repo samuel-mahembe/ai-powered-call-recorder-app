@@ -159,3 +159,5 @@ test_*.py
 demo_*.py
 quick_*.py
 hackathon_*.py
+
+.idea
