@@ -1,3 +1,17 @@
+# Angular specific
+/dist/
+/out-tsc/
+/tmp/
+/coverage/
+/e2e/test-output/
+/.angular/
+.angular/
+
+# Node modules and dependency files
+/node_modules/
+/package-lock.json
+/yarn.lock
+
 # Python
 __pycache__/
 *.py[cod]
@@ -30,6 +44,7 @@ env/
 .env/
 
 # Environment files
+/.env
 .env
 .env.local
 .env.development
@@ -37,6 +52,9 @@ env/
 .env.production
 .env.staging
 
+# Angular CLI and build artefacts
+/.angular-cli.json
+/.ng/
 # IDEs and editors
 .vscode/
 .idea/
@@ -46,6 +64,8 @@ env/
 .sublime-project
 .sublime-workspace
 
+# TypeScript cache
+*.tsbuildinfo
 # OS files
 .DS_Store
 .DS_Store?
