@@ -1,1 +1,200 @@
-<p>call-reports works!</p>
+<!-- Header -->
+<div class="reports-header">
+  <div>
+    <h1 class="page-title">
+      <mat-icon>assessment</mat-icon>
+      Call Reports
+    </h1>
+    <p class="page-subtitle">View and analyze all call recordings and their semantic details</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat-item">
+      <mat-icon>phone</mat-icon>
+      <div>
+        <div class="stat-value">{{ callRecords.length }}</div>
+        <div class="stat-label">Total Calls</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filters Card -->
+<mat-card class="cardWithShadow filters-card">
+  <mat-card-content>
+    <div class="filters-container">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search</mat-label>
+        <input matInput placeholder="Search by customer, call ID, or agent" [(ngModel)]="searchTerm" />
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Sentiment</mat-label>
+        <mat-select [(ngModel)]="selectedSentiment">
+          <mat-option value="all">All Sentiments</mat-option>
+          <mat-option value="positive">Positive</mat-option>
+          <mat-option value="neutral">Neutral</mat-option>
+          <mat-option value="negative">Negative</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategory">
+          <mat-option value="all">All Categories</mat-option>
+          <mat-option value="Billing Inquiry">Billing Inquiry</mat-option>
+          <mat-option value="Technical Support">Technical Support</mat-option>
+          <mat-option value="Cancellation Request">Cancellation Request</mat-option>
+          <mat-option value="Product Information">Product Information</mat-option>
+          <mat-option value="Account Management">Account Management</mat-option>
+          <mat-option value="Refund Request">Refund Request</mat-option>
+          <mat-option value="Complaint">Complaint</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Priority</mat-label>
+        <mat-select [(ngModel)]="selectedPriority">
+          <mat-option value="all">All Priorities</mat-option>
+          <mat-option value="high">High</mat-option>
+          <mat-option value="medium">Medium</mat-option>
+          <mat-option value="low">Low</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- Call Records Table -->
+<mat-card class="cardWithShadow table-card">
+  <mat-card-content>
+    <div class="table-container">
+      <table mat-table [dataSource]="filteredCallRecords" class="calls-table">
+        <!-- Call ID Column -->
+        <ng-container matColumnDef="callId">
+          <th mat-header-cell *matHeaderCellDef>Call ID</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="call-id-cell">
+              <mat-icon class="call-icon">phone</mat-icon>
+              <span>{{ call.callId }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Customer Name Column -->
+        <ng-container matColumnDef="customerName">
+          <th mat-header-cell *matHeaderCellDef>Customer</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="customer-cell">
+              <mat-icon class="customer-icon">person</mat-icon>
+              <div>
+                <div class="customer-name">{{ call.customerName }}</div>
+                <div class="customer-phone">{{ call.phoneNumber }}</div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Agent Name Column -->
+        <ng-container matColumnDef="agentName">
+          <th mat-header-cell *matHeaderCellDef>Agent</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="agent-cell">
+              <mat-icon class="agent-icon">support_agent</mat-icon>
+              <span>{{ call.agentName }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date & Time</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="date-cell">
+              <div class="date-value">{{ call.date | date: 'MMM d, y' }}</div>
+              <div class="time-value">{{ call.date | date: 'h:mm a' }}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Duration Column -->
+        <ng-container matColumnDef="duration">
+          <th mat-header-cell *matHeaderCellDef>Duration</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="duration-cell">
+              <mat-icon class="duration-icon">access_time</mat-icon>
+              <span>{{ formatDuration(call.duration) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Sentiment Column -->
+        <ng-container matColumnDef="sentiment">
+          <th mat-header-cell *matHeaderCellDef>Sentiment</th>
+          <td mat-cell *matCellDef="let call">
+            <mat-chip [color]="getSentimentColor(call.sentiment)" selected>
+              {{ call.sentiment | titlecase }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="category-cell">{{ call.category }}</div>
+          </td>
+        </ng-container>
+
+        <!-- Priority Column -->
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef>Priority</th>
+          <td mat-cell *matCellDef="let call">
+            <mat-chip [color]="getPriorityColor(call.priority)" selected>
+              {{ call.priority | titlecase }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Resolution Status Column -->
+        <ng-container matColumnDef="resolutionStatus">
+          <th mat-header-cell *matHeaderCellDef>Resolution</th>
+          <td mat-cell *matCellDef="let call">
+            <div class="resolution-cell">
+              <mat-icon [ngClass]="call.resolutionStatus === 'resolved' ? 'resolved-icon' : 'unresolved-icon'">
+                {{ call.resolutionStatus === 'resolved' ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              <span [ngClass]="call.resolutionStatus === 'resolved' ? 'resolved-text' : 'unresolved-text'">
+                {{ call.resolutionStatus | titlecase }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let call">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="openCallDetails(call)"
+              matTooltip="View Call Details">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredCallRecords.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">inbox</mat-icon>
+        <h3>No calls found</h3>
+        <p>Try adjusting your filters to see more results</p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

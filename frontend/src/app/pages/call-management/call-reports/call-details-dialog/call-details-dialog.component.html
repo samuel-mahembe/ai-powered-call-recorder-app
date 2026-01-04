@@ -1,0 +1,164 @@
+<div class="call-details-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title class="dialog-title">
+      <mat-icon>phone</mat-icon>
+      Call Details
+    </h2>
+    <button mat-icon-button (click)="closeDialog()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Call Information Section -->
+    <div class="info-section">
+      <h3 class="section-title">
+        <mat-icon>info</mat-icon>
+        Call Information
+      </h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <mat-icon>tag</mat-icon>
+          <div>
+            <div class="info-label">Call ID</div>
+            <div class="info-value">{{ call.callId }}</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <mat-icon>person</mat-icon>
+          <div>
+            <div class="info-label">Customer</div>
+            <div class="info-value">{{ call.customerName }}</div>
+            <div class="info-subvalue">{{ call.phoneNumber }}</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <mat-icon>support_agent</mat-icon>
+          <div>
+            <div class="info-label">Agent</div>
+            <div class="info-value">{{ call.agentName }}</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <mat-icon>event</mat-icon>
+          <div>
+            <div class="info-label">Date & Time</div>
+            <div class="info-value">{{ call.date | date: 'MMM d, y h:mm a' }}</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <mat-icon>access_time</mat-icon>
+          <div>
+            <div class="info-label">Duration</div>
+            <div class="info-value">{{ formatDuration(call.duration) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="metrics-section">
+      <h3 class="section-title">
+        <mat-icon>analytics</mat-icon>
+        Key Metrics
+      </h3>
+      <div class="metrics-grid">
+        <div class="metric-box sentiment-box" [ngClass]="call.sentiment">
+          <mat-icon>mood</mat-icon>
+          <div>
+            <div class="metric-label">Sentiment</div>
+            <div class="metric-value">{{ call.sentiment | titlecase }}</div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <mat-icon>category</mat-icon>
+          <div>
+            <div class="metric-label">Category</div>
+            <div class="metric-value">{{ call.category }}</div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <mat-icon>flag</mat-icon>
+          <div>
+            <div class="metric-label">Priority</div>
+            <div class="metric-value">{{ call.priority | titlecase }}</div>
+          </div>
+        </div>
+        <div class="metric-box">
+          <mat-icon>check_circle</mat-icon>
+          <div>
+            <div class="metric-label">Resolution</div>
+            <div class="metric-value">{{ call.resolutionStatus | titlecase }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="analysis-section">
+      <h3 class="section-title">
+        <mat-icon>summarize</mat-icon>
+        Summary
+      </h3>
+      <ul class="summary-list">
+        <li *ngFor="let item of callAnalysis.summary">{{ item }}</li>
+      </ul>
+    </div>
+
+    <!-- Action Items Section -->
+    <div class="analysis-section">
+      <h3 class="section-title">
+        <mat-icon>task_alt</mat-icon>
+        Action Items
+      </h3>
+      <ul class="action-list">
+        <li *ngFor="let item of callAnalysis.actionItems">
+          <mat-icon class="action-icon">check_circle</mat-icon>
+          <span>{{ item }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Customer Requests Section -->
+    <div class="analysis-section">
+      <h3 class="section-title">
+        <mat-icon>person</mat-icon>
+        Customer Requests
+      </h3>
+      <ul class="requests-list">
+        <li *ngFor="let item of callAnalysis.customerRequests">
+          <mat-icon class="request-icon">chat_bubble</mat-icon>
+          <span>{{ item }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Agent Performance Section -->
+    <div class="analysis-section">
+      <h3 class="section-title">
+        <mat-icon>star</mat-icon>
+        Agent Performance
+      </h3>
+      <div class="performance-content">
+        <p>{{ callAnalysis.agentPerformance }}</p>
+      </div>
+    </div>
+
+    <!-- Tags Section -->
+    <div class="analysis-section">
+      <h3 class="section-title">
+        <mat-icon>label</mat-icon>
+        Tags
+      </h3>
+      <div class="tags-container">
+        <mat-chip *ngFor="let tag of callAnalysis.tags" selected>{{ tag }}</mat-chip>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="closeDialog()" color="primary">Close</button>
+  </mat-dialog-actions>
+</div>
+
