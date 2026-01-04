@@ -1,0 +1,50 @@
+services:
+  # MongoDB database
+  mongodb:
+    image: mongo:7.0
+    container_name: ai-call-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ai_call_summarization
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - ai-call-network
+
+  # Unified frontend + backend application
+  app:
+    build: .
+    container_name: ai-call-app
+    restart: unless-stopped
+    ports:
+      - "80:80"      # Frontend (nginx)
+      - "8000:8000"  # Backend API (direct access)
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - DATABASE_NAME=ai_call_summarization
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CORS_ORIGINS=http://localhost,http://localhost:80
+      - PORT=8000
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - /tmp/ai_call_audio:/tmp/ai_call_audio
+    networks:
+      - ai-call-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health", "&&", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  ai-call-network:
+    driver: bridge

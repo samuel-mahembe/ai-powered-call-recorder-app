@@ -1,0 +1,54 @@
+# Node modules
+frontend/node_modules/
+backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mvn
+target/
+.idea/
+*.swp
+*.swo
+*~
+
+# Angular build output
+frontend/dist/
+frontend/.angular/
+
+# Uploads and temporary files
+backend/uploads/*
+/tmp/ai_call_audio/*
+!backend/uploads/.gitkeep
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
