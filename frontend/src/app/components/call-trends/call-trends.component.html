@@ -1,0 +1,25 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="hstack align-items-center flex-column flex-lg-row m-b-20">
+      <mat-card-title class="chart-title">
+        <mat-icon>show_chart</mat-icon>
+        Call Trends & Positive Sentiments
+      </mat-card-title>
+    </div>
+    <apx-chart
+      [series]="callTrendsChart.series"
+      [chart]="callTrendsChart.chart"
+      [dataLabels]="callTrendsChart.dataLabels"
+      [stroke]="callTrendsChart.stroke"
+      [fill]="callTrendsChart.fill"
+      [colors]="callTrendsChart.colors"
+      [markers]="callTrendsChart.markers"
+      [xaxis]="callTrendsChart.xaxis"
+      [yaxis]="callTrendsChart.yaxis"
+      [grid]="callTrendsChart.grid"
+      [legend]="callTrendsChart.legend"
+      [tooltip]="callTrendsChart.tooltip">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+

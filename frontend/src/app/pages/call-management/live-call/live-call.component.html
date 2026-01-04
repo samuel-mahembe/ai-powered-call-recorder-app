@@ -1,0 +1,244 @@
+<!-- Header -->
+<div class="live-call-header">
+  <h1 class="page-title">
+    <mat-icon>phone</mat-icon>
+    Live Call Center
+  </h1>
+  <div class="call-status-indicator" [ngClass]="callState">
+    <div class="status-dot"></div>
+    <span class="status-text">{{ callState | titlecase }}</span>
+  </div>
+</div>
+
+<!-- Main Call Interface -->
+<div class="row" *ngIf="callState !== 'idle'">
+  <!-- Left Column: Customer Info & Call Controls -->
+  <div class="col-lg-4">
+    <!-- Customer Information Card -->
+    <mat-card class="cardWithShadow customer-card" *ngIf="currentCustomer">
+      <mat-card-content>
+        <div class="customer-header">
+          <div class="customer-avatar">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div class="customer-details">
+            <h2 class="customer-name">{{ currentCustomer.name }}</h2>
+            <div class="customer-phone">
+              <mat-icon>phone</mat-icon>
+              <span>{{ currentCustomer.phone }}</span>
+            </div>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="customer-info-grid">
+          <div class="info-item">
+            <mat-icon>badge</mat-icon>
+            <div>
+              <div class="info-label">Account ID</div>
+              <div class="info-value">{{ currentCustomer.accountId }}</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>history</mat-icon>
+            <div>
+              <div class="info-label">Previous Calls</div>
+              <div class="info-value">{{ currentCustomer.previousCalls }}</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <div class="info-label">Last Contact</div>
+              <div class="info-value">{{ currentCustomer.lastContact }}</div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Call Timer & Controls -->
+    <mat-card class="cardWithShadow controls-card">
+      <mat-card-content>
+        <div class="call-timer">
+          <mat-icon class="timer-icon">access_time</mat-icon>
+          <span class="timer-text">{{ formatTime(callDuration) }}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="call-controls">
+          <button
+            mat-fab
+            [color]="isMuted ? 'warn' : 'primary'"
+            (click)="toggleMute()"
+            [class.active]="isMuted"
+            matTooltip="{{ isMuted ? 'Unmute' : 'Mute' }}">
+            <mat-icon>{{ isMuted ? 'mic_off' : 'mic' }}</mat-icon>
+          </button>
+          <button
+            mat-fab
+            [color]="isOnHold ? 'accent' : 'primary'"
+            (click)="toggleHold()"
+            [class.active]="isOnHold"
+            [disabled]="callState !== 'active' && callState !== 'on-hold'"
+            matTooltip="{{ isOnHold ? 'Resume' : 'Hold' }}">
+            <mat-icon>{{ isOnHold ? 'play_arrow' : 'pause' }}</mat-icon>
+          </button>
+          <button
+            mat-fab
+            color="warn"
+            (click)="endCall()"
+            [disabled]="callState === 'ended' || callState === 'analyzing'"
+            matTooltip="End Call">
+            <mat-icon>call_end</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Right Column: Conversation & Analysis -->
+  <div class="col-lg-8">
+    <!-- Conversation Card -->
+    <mat-card class="cardWithShadow conversation-card" *ngIf="callState !== 'analyzing'">
+      <mat-card-content>
+        <div class="conversation-header">
+          <mat-card-title>
+            <mat-icon>chat</mat-icon>
+            Live Conversation
+          </mat-card-title>
+          <div class="conversation-status">
+            <div class="pulse-indicator" *ngIf="callState === 'active'"></div>
+            <span>{{ callState === 'active' ? 'Live' : callState === 'on-hold' ? 'On Hold' : 'Ended' }}</span>
+          </div>
+        </div>
+        <div class="conversation-container">
+          <div *ngFor="let msg of conversation" class="message" [ngClass]="msg.speaker.toLowerCase()">
+            <div class="message-header">
+              <mat-icon class="speaker-icon" [ngClass]="msg.speaker.toLowerCase() + '-icon'">
+                {{ msg.speaker === 'Agent' ? 'support_agent' : 'person' }}
+              </mat-icon>
+              <span class="speaker-name">{{ msg.speaker }}</span>
+              <span class="message-time">{{ msg.timestamp }}</span>
+            </div>
+            <div class="message-content">
+              <p>{{ msg.message }}</p>
+            </div>
+          </div>
+          <div *ngIf="isTyping" class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Call Analysis Card -->
+    <mat-card class="cardWithShadow analysis-card" *ngIf="callState === 'analyzing' || callAnalysis">
+      <mat-card-content>
+        <div *ngIf="isAnalyzing" class="analyzing-state">
+          <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
+          <h3>Analyzing Call...</h3>
+          <p>Generating sentiment analysis and insights</p>
+        </div>
+
+        <div *ngIf="callAnalysis && !isAnalyzing" class="analysis-results">
+          <mat-card-title class="analysis-title">
+            <mat-icon>analytics</mat-icon>
+            Call Analysis Results
+          </mat-card-title>
+
+          <!-- Key Metrics -->
+          <div class="analysis-metrics">
+            <div class="metric-box sentiment-box" [ngClass]="callAnalysis.sentiment">
+              <mat-icon>mood</mat-icon>
+              <div>
+                <div class="metric-label">Sentiment</div>
+                <div class="metric-value">{{ callAnalysis.sentiment | titlecase }}</div>
+              </div>
+            </div>
+            <div class="metric-box">
+              <mat-icon>category</mat-icon>
+              <div>
+                <div class="metric-label">Category</div>
+                <div class="metric-value">{{ callAnalysis.category }}</div>
+              </div>
+            </div>
+            <div class="metric-box">
+              <mat-icon>flag</mat-icon>
+              <div>
+                <div class="metric-label">Priority</div>
+                <div class="metric-value">{{ callAnalysis.priority | titlecase }}</div>
+              </div>
+            </div>
+            <div class="metric-box">
+              <mat-icon>check_circle</mat-icon>
+              <div>
+                <div class="metric-label">Resolution</div>
+                <div class="metric-value">{{ callAnalysis.resolution_status | titlecase }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="analysis-section">
+            <h3>
+              <mat-icon>summarize</mat-icon>
+              Summary
+            </h3>
+            <ul>
+              <li *ngFor="let item of callAnalysis.summary">{{ item }}</li>
+            </ul>
+          </div>
+
+          <!-- Action Items -->
+          <div class="analysis-section">
+            <h3>
+              <mat-icon>task_alt</mat-icon>
+              Action Items
+            </h3>
+            <ul>
+              <li *ngFor="let item of callAnalysis.action_items">{{ item }}</li>
+            </ul>
+          </div>
+
+          <!-- Tags -->
+          <div class="analysis-section">
+            <h3>
+              <mat-icon>label</mat-icon>
+              Tags
+            </h3>
+            <div class="tags-container">
+              <mat-chip *ngFor="let tag of callAnalysis.tags" selected>{{ tag }}</mat-chip>
+            </div>
+          </div>
+
+          <!-- Next Caller Button -->
+          <div class="next-caller-section">
+            <button mat-raised-button color="primary" size="large" (click)="nextCaller()" class="next-caller-btn">
+              <mat-icon>phone</mat-icon>
+              Next Caller
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Idle State -->
+<div class="idle-state" *ngIf="callState === 'idle'">
+  <mat-card class="cardWithShadow idle-card">
+    <mat-card-content>
+      <div class="idle-content">
+        <mat-icon class="idle-icon">phone_disabled</mat-icon>
+        <h2>Waiting for Next Call</h2>
+        <p>Your call center is ready to receive the next customer call</p>
+        <button mat-raised-button color="primary" size="large" (click)="receiveCall()" class="receive-call-btn">
+          <mat-icon>phone</mat-icon>
+          Simulate Incoming Call
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

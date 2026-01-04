@@ -1,0 +1,20 @@
+<div class="metrics-grid">
+  <mat-card *ngFor="let metric of metrics" [ngClass]="getMetricClass(metric)" class="cardWithShadow metric-card">
+    <mat-card-content>
+      <div class="metric-content">
+        <div class="metric-icon-wrapper" [ngClass]="metric.color + '-icon'">
+          <mat-icon>{{ metric.icon }}</mat-icon>
+        </div>
+        <div class="metric-details">
+          <div class="metric-label">{{ metric.label }}</div>
+          <div class="metric-value">{{ metric.value }}</div>
+          <div *ngIf="metric.change !== undefined" class="metric-change" [ngClass]="{'positive': metric.isPositive, 'negative': !metric.isPositive}">
+            <mat-icon>{{ metric.isPositive ? 'trending_up' : 'trending_down' }}</mat-icon>
+            <span>{{ metric.change > 0 ? '+' : '' }}{{ metric.change }}%</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

@@ -1,24 +1,25 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { MaterialModule } from '../../material.module';
-import { AppBlogCardsComponent } from 'src/app/components/blog-card/blog-card.component';
-import { AppSalesProfitComponent } from 'src/app/components/sales-profit/sales-profit.component';
-import { AppTotalFollowersComponent } from 'src/app/components/total-followers/total-followers.component';
-import { AppTotalIncomeComponent } from 'src/app/components/total-income/total-income.component';
-import { AppPopularProductsComponent } from 'src/app/components/popular-products/popular-products.component';
-import { AppEarningReportsComponent } from 'src/app/components/earning-reports/earning-reports.component';
+import { AppTotalCallsComponent } from 'src/app/components/total-calls/total-calls.component';
+import { AppSentimentDistributionComponent } from 'src/app/components/sentiment-distribution/sentiment-distribution.component';
+import { AppCallTrendsComponent } from 'src/app/components/call-trends/call-trends.component';
+import { AppAgentPerformanceComponent } from 'src/app/components/agent-performance/agent-performance.component';
+import { AppTopSentimentsComponent } from 'src/app/components/top-sentiments/top-sentiments.component';
+import { AppCallMetricsComponent } from 'src/app/components/call-metrics/call-metrics.component';
 
 @Component({
   selector: 'app-starter',
   imports: [
     MaterialModule,
-    AppBlogCardsComponent,
-    AppSalesProfitComponent,
-    AppTotalFollowersComponent,
-    AppTotalIncomeComponent,
-    AppPopularProductsComponent,
-    AppEarningReportsComponent
+    AppTotalCallsComponent,
+    AppSentimentDistributionComponent,
+    AppCallTrendsComponent,
+    AppAgentPerformanceComponent,
+    AppTopSentimentsComponent,
+    AppCallMetricsComponent,
   ],
   templateUrl: './starter.component.html',
+  styleUrls: ['./starter.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class StarterComponent { }

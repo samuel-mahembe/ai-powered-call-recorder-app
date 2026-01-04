@@ -1,0 +1,434 @@
+@use "sass:map";
+
+// Color variables matching theme
+$primary: rgb(0, 161, 255);
+$secondary: rgb(22, 205, 199);
+$success: #00ceb6;
+$warning: #ffae1f;
+$error: rgb(255, 102, 146);
+$light-bg: #f8fafd;
+$surface: #ffffff;
+$text-primary: rgba(0, 0, 0, 0.87);
+$text-secondary: rgba(0, 0, 0, 0.6);
+
+.dashboard-header {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 4px 16px rgba(0, 161, 255, 0.15);
+
+  .dashboard-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: white;
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  .dashboard-subtitle {
+    font-size: 16px;
+    margin: 0;
+    opacity: 0.9;
+    color: white;
+  }
+}
+
+// Metric Cards Styling
+.metric-card {
+  height: 100%;
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 161, 255, 0.2);
+  }
+
+  .metric-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+
+    .metric-icon-wrapper {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: white;
+      }
+
+      &.calls-icon {
+        background: linear-gradient(135deg, $primary 0%, lighten($primary, 10%) 100%);
+      }
+
+      &.primary-icon {
+        background: linear-gradient(135deg, $primary 0%, lighten($primary, 10%) 100%);
+      }
+
+      &.success-icon {
+        background: linear-gradient(135deg, $success 0%, lighten($success, 10%) 100%);
+      }
+
+      &.warn-icon {
+        background: linear-gradient(135deg, $warning 0%, lighten($warning, 10%) 100%);
+      }
+
+      &.error-icon {
+        background: linear-gradient(135deg, $error 0%, lighten($error, 10%) 100%);
+      }
+    }
+
+    .metric-details {
+      flex: 1;
+
+      .metric-label {
+        font-size: 14px;
+        color: $text-secondary;
+        font-weight: 500;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .metric-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: $text-primary;
+        margin-bottom: 4px;
+      }
+
+      .metric-change {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 600;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+
+        &.positive {
+          color: $success;
+        }
+
+        &.negative {
+          color: $error;
+        }
+      }
+    }
+  }
+}
+
+// Chart Title Styling
+.chart-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 24px;
+
+  mat-icon {
+    color: $primary;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// Metrics Grid
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  height: 100%;
+
+  .metric-card {
+    &.success {
+      .metric-icon-wrapper {
+        background: linear-gradient(135deg, $success 0%, lighten($success, 10%) 100%);
+      }
+    }
+
+    &.primary {
+      .metric-icon-wrapper {
+        background: linear-gradient(135deg, $primary 0%, lighten($primary, 10%) 100%);
+      }
+    }
+
+    &.warn {
+      .metric-icon-wrapper {
+        background: linear-gradient(135deg, $warning 0%, lighten($warning, 10%) 100%);
+      }
+    }
+
+    &.error {
+      .metric-icon-wrapper {
+        background: linear-gradient(135deg, $error 0%, lighten($error, 10%) 100%);
+      }
+    }
+  }
+}
+
+// Agent Performance Table
+.table-container {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.agent-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    color: $text-primary;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    font-size: 14px;
+  }
+
+  .agent-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .agent-icon {
+      color: $primary;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .metric-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .metric-icon {
+      color: $secondary;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .sentiment-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .sentiment-value {
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    .sentiment-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 161, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+
+      .sentiment-fill {
+        height: 100%;
+        background: linear-gradient(90deg, $primary 0%, $secondary 100%);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+
+  .time-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .time-icon {
+      color: $warning;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .rate-cell {
+    .rate-value {
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+
+  .table-row {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(0, 161, 255, 0.05);
+    }
+  }
+}
+
+// Top Sentiments List
+.sentiments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.sentiment-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: $light-bg;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 161, 255, 0.1);
+  }
+
+  .sentiment-rank {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .sentiment-content {
+    flex: 1;
+
+    .sentiment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .sentiment-category {
+        font-size: 16px;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .sentiment-chip {
+        .chip-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          margin-right: 4px;
+        }
+      }
+    }
+
+    .sentiment-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 8px;
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+        color: $text-secondary;
+
+        .stat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: $primary;
+        }
+      }
+    }
+
+    .sentiment-progress {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 161, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, $primary 0%, $secondary 100%);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+}
+
+// Card Shadow
+.cardWithShadow {
+  box-shadow: 0 2px 8px rgba(0, 161, 255, 0.08);
+  border-radius: 16px;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 161, 255, 0.12);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .dashboard-header {
+    .dashboard-title {
+      font-size: 24px;
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sentiment-item {
+    flex-direction: column;
+    text-align: center;
+
+    .sentiment-rank {
+      align-self: center;
+    }
+  }
+}
+

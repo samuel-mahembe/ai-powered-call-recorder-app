@@ -1,24 +1,39 @@
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+  <h1 class="dashboard-title">
+    <mat-icon>dashboard</mat-icon>
+    Call Analytics Dashboard
+  </h1>
+  <p class="dashboard-subtitle">Comprehensive insights into your call center performance</p>
+</div>
+
+<!-- Key Metrics Row -->
+<div class="row">
+  <div class="col-lg-3 col-md-6">
+    <app-total-calls></app-total-calls>
+  </div>
+  <div class="col-lg-9 col-md-12">
+    <app-call-metrics></app-call-metrics>
+  </div>
+</div>
+<br>
+
+<!-- Charts Row -->
 <div class="row">
   <div class="col-lg-8">
-    <app-sales-profit></app-sales-profit>
+    <app-call-trends></app-call-trends>
   </div>
   <div class="col-lg-4">
-    <div class="row">
-      <div class="col-12">
-        <app-total-followers></app-total-followers>
-      </div>
-      <div class="col-12">
-        <app-total-income></app-total-income>
-      </div>
-    </div>
+    <app-sentiment-distribution></app-sentiment-distribution>
   </div>
+</div>
+
+<!-- Agent Performance and Top Sentiments Row -->
+<div class="row">
   <div class="col-lg-8">
-    <app-popular-products></app-popular-products>
+    <app-agent-performance></app-agent-performance>
   </div>
   <div class="col-lg-4">
-    <app-earning-reports></app-earning-reports>
-  </div>
-  <div class="col-12">
-    <app-blog-card></app-blog-card>
+    <app-top-sentiments></app-top-sentiments>
   </div>
 </div>

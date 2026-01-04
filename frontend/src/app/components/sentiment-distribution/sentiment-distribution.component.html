@@ -1,0 +1,19 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-card-title class="chart-title">
+      <mat-icon>pie_chart</mat-icon>
+      Sentiment Distribution
+    </mat-card-title>
+    <apx-chart
+      [series]="sentimentChart.series"
+      [chart]="sentimentChart.chart"
+      [dataLabels]="sentimentChart.dataLabels"
+      [plotOptions]="sentimentChart.plotOptions"
+      [legend]="sentimentChart.legend"
+      [colors]="sentimentChart.colors"
+      [labels]="sentimentChart.labels"
+      [tooltip]="sentimentChart.tooltip">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+

@@ -1,0 +1,81 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-card-title class="chart-title">
+      <mat-icon>people</mat-icon>
+      Agent Performance
+    </mat-card-title>
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" class="agent-table">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Agent Name</th>
+          <td mat-cell *matCellDef="let agent">
+            <div class="agent-name-cell">
+              <mat-icon class="agent-icon">person</mat-icon>
+              <span>{{ agent.name }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Total Calls Column -->
+        <ng-container matColumnDef="totalCalls">
+          <th mat-header-cell *matHeaderCellDef>Total Calls</th>
+          <td mat-cell *matCellDef="let agent">
+            <div class="metric-cell">
+              <mat-icon class="metric-icon">phone</mat-icon>
+              <span>{{ agent.totalCalls }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Positive Sentiment Column -->
+        <ng-container matColumnDef="positiveSentiment">
+          <th mat-header-cell *matHeaderCellDef>Positive %</th>
+          <td mat-cell *matCellDef="let agent">
+            <div class="sentiment-cell">
+              <span class="sentiment-value">{{ agent.positiveSentiment }}%</span>
+              <div class="sentiment-bar">
+                <div class="sentiment-fill" [style.width.%]="agent.positiveSentiment"></div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Avg Resolution Time Column -->
+        <ng-container matColumnDef="avgResolutionTime">
+          <th mat-header-cell *matHeaderCellDef>Avg Resolution</th>
+          <td mat-cell *matCellDef="let agent">
+            <div class="time-cell">
+              <mat-icon class="time-icon">access_time</mat-icon>
+              <span>{{ agent.avgResolutionTime }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Resolution Rate Column -->
+        <ng-container matColumnDef="resolutionRate">
+          <th mat-header-cell *matHeaderCellDef>Resolution Rate</th>
+          <td mat-cell *matCellDef="let agent">
+            <div class="rate-cell">
+              <span class="rate-value">{{ agent.resolutionRate }}%</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let agent">
+            <mat-chip [color]="getStatusColor(agent.status)" selected>
+              {{ getStatusLabel(agent.status) }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>
+

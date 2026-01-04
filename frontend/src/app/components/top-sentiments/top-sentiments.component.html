@@ -1,0 +1,36 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-card-title class="chart-title">
+      <mat-icon>trending_up</mat-icon>
+      Top Call Categories by Sentiment
+    </mat-card-title>
+    <div class="sentiments-list">
+      <div *ngFor="let item of topSentiments; let i = index" class="sentiment-item">
+        <div class="sentiment-rank">{{ i + 1 }}</div>
+        <div class="sentiment-content">
+          <div class="sentiment-header">
+            <span class="sentiment-category">{{ item.category }}</span>
+            <mat-chip [color]="getSentimentColor(item.sentiment)" selected class="sentiment-chip">
+              <mat-icon class="chip-icon">{{ getSentimentIcon(item.sentiment) }}</mat-icon>
+              {{ item.sentiment | titlecase }}
+            </mat-chip>
+          </div>
+          <div class="sentiment-stats">
+            <div class="stat-item">
+              <mat-icon class="stat-icon">phone</mat-icon>
+              <span>{{ item.count }} calls</span>
+            </div>
+            <div class="stat-item">
+              <mat-icon class="stat-icon">percent</mat-icon>
+              <span>{{ item.percentage }}%</span>
+            </div>
+          </div>
+          <div class="sentiment-progress">
+            <div class="progress-bar" [style.width.%]="item.percentage"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+

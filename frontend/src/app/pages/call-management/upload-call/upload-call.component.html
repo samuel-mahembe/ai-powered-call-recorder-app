@@ -1,170 +1,279 @@
-<mat-card class="cardWithShadow">
+<!-- Header Card -->
+<mat-card class="cardWithShadow header-card">
   <mat-card-content>
-    <mat-card-title>Upload Call</mat-card-title>
-    <mat-card-subtitle>Upload a call recording to analyze</mat-card-subtitle>
+    <div class="header-content">
+      <div>
+        <mat-card-title class="page-title">Upload Call Recording</mat-card-title>
+        <mat-card-subtitle class="page-subtitle">Upload and analyze your call recordings with AI-powered insights</mat-card-subtitle>
+      </div>
+      <mat-icon class="header-icon">upload_file</mat-icon>
+    </div>
   </mat-card-content>
 </mat-card>
 
-<mat-card class="cardWithShadow">
-    <mat-card-content>
-        <mat-card-title>Upload Voice Audio for Analysis</mat-card-title>
+<!-- Upload Section -->
+<mat-card class="cardWithShadow upload-card">
+  <mat-card-content>
+    <mat-card-title class="section-title">
+      <mat-icon>cloud_upload</mat-icon>
+      Upload Voice Audio for Analysis
+    </mat-card-title>
+    
     <!-- Drag & Drop Upload Area -->
     <div class="upload-dropzone" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)"
       (dragleave)="onDragLeave($event)" [class.active]="isDropzoneActive">
-      <mat-icon>cloud_upload</mat-icon>
-      <p>Drag & drop your .mp3 or .wav file here, or</p>
-      <button mat-raised-button color="primary" (click)="fileInput.click()">Browse</button>
-      <input #fileInput type="file" accept=".mp3,.wav" hidden (change)="onFileSelected($event)" />
+      <div class="dropzone-content">
+        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+        <h3>Drag & Drop Your Audio File</h3>
+        <p>Supported formats: .mp3, .wav</p>
+        <p class="or-text">or</p>
+        <button mat-raised-button color="primary" (click)="fileInput.click()">
+          <mat-icon>folder_open</mat-icon>
+          Browse Files
+        </button>
+        <input #fileInput type="file" accept=".mp3,.wav" hidden (change)="onFileSelected($event)" />
+      </div>
     </div>
 
     <!-- Selected File Info -->
-    <div *ngIf="selectedFile" class="file-info">
-      <mat-chip color="primary" selected>
-        {{ selectedFile.name }} ({{ selectedFile.size / 1000 | number:'1.0-0' }} KB)
-      </mat-chip>
-      <button mat-icon-button color="warn" (click)="removeFile()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-
-    <!-- Upload Button & Progress -->
-    <div class="center-actions" *ngIf="selectedFile">
-      <button mat-raised-button color="accent" (click)="uploadFile()" [disabled]="isUploading">
-        Upload
-      </button>
-      <mat-progress-bar *ngIf="isUploading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="selectedFile" class="file-info-card">
+      <div class="file-info-content">
+        <mat-icon class="file-icon">audio_file</mat-icon>
+        <div class="file-details">
+          <div class="file-name">{{ selectedFile.name }}</div>
+          <div class="file-size">{{ selectedFile.size / 1000 | number:'1.0-0' }} KB</div>
+        </div>
+        <button mat-icon-button color="warn" (click)="removeFile()" class="remove-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="upload-actions">
+        <button mat-raised-button color="accent" (click)="uploadFile()" [disabled]="isUploading" class="upload-btn">
+          <mat-icon *ngIf="!isUploading">upload</mat-icon>
+          <mat-progress-spinner *ngIf="isUploading" diameter="20" mode="indeterminate" class="inline-spinner"></mat-progress-spinner>
+          {{ isUploading ? 'Uploading...' : 'Upload & Analyze' }}
+        </button>
+        <mat-progress-bar *ngIf="isUploading" mode="indeterminate" class="upload-progress"></mat-progress-bar>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>
 
 <!-- Processing Progress -->
-<mat-card *ngIf="isProcessing" class="cardWithShadow">
+<mat-card *ngIf="isProcessing" class="cardWithShadow processing-card">
   <mat-card-content>
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-    <p>{{ processingStatus }}</p>
+    <div class="processing-content">
+      <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
+      <h3>Processing Your Call</h3>
+      <p class="processing-status">{{ processingStatus }}</p>
+    </div>
   </mat-card-content>
 </mat-card>
 
 <!-- Call Analysis Section -->
-<mat-card *ngIf="callResult" class="cardWithShadow">
+<mat-card *ngIf="callResult" class="cardWithShadow analysis-card">
   <mat-card-content>
-    <mat-card-title>Call Analysis</mat-card-title>
-    <div class="call-summary-table">
-      <div class="row">
-        <div class="label">Call ID</div>
-        <div class="value">{{ callResult.call_id }}</div>
-      </div>
-      <div class="row">
-        <div class="label">Category</div>
-        <div class="value">
-          <mat-chip color="primary" selected>{{ callResult.category }}</mat-chip>
+    <div class="analysis-header">
+      <mat-card-title class="section-title">
+        <mat-icon>analytics</mat-icon>
+        Call Analysis Results
+      </mat-card-title>
+      <button mat-icon-button color="primary" (click)="exportToPDF()" matTooltip="Export to PDF">
+        <mat-icon>download</mat-icon>
+      </button>
+    </div>
+
+    <!-- Key Metrics Pills -->
+    <div class="metrics-grid">
+      <div class="metric-pill call-id-pill">
+        <mat-icon>tag</mat-icon>
+        <div>
+          <span class="metric-label">Call ID</span>
+          <span class="metric-value">{{ callResult.call_id }}</span>
         </div>
       </div>
-      <div class="row">
-        <div class="label">Sentiment</div>
-        <div class="value">
-          <mat-chip [ngClass]="{
-            'sentiment-success': callResult.sentiment === 'positive',
-            'sentiment-neutral': callResult.sentiment === 'neutral',
-            'sentiment-danger': callResult.sentiment === 'negative'
-          }">
-            {{ callResult.sentiment | titlecase }}
-          </mat-chip>
+      
+      <div class="metric-pill category-pill">
+        <mat-icon>category</mat-icon>
+        <div>
+          <span class="metric-label">Category</span>
+          <span class="metric-value">{{ callResult.category }}</span>
         </div>
       </div>
-      <div class="row">
-        <div class="label">Priority</div>
-        <div class="value">
-          <mat-chip [ngClass]="{
-            'priority-high': callResult.priority === 'high',
-            'priority-medium': callResult.priority === 'medium',
-            'priority-low': callResult.priority === 'low'
-          }">
-            {{ callResult.priority | titlecase }}
-          </mat-chip>
+
+      <div class="metric-pill sentiment-pill" [ngClass]="{
+        'sentiment-positive': callResult.sentiment === 'positive',
+        'sentiment-neutral': callResult.sentiment === 'neutral',
+        'sentiment-negative': callResult.sentiment === 'negative'
+      }">
+        <mat-icon>mood</mat-icon>
+        <div>
+          <span class="metric-label">Sentiment</span>
+          <span class="metric-value">{{ callResult.sentiment | titlecase }}</span>
         </div>
       </div>
-      <div class="row">
-        <div class="label">Resolution</div>
-        <div class="value">
-          <mat-chip [ngClass]="{
-            'resolution-resolved': callResult.resolution_status === 'resolved',
-            'resolution-unresolved': callResult.resolution_status !== 'resolved'
-          }">
-            {{ callResult.resolution_status | titlecase }}
-          </mat-chip>
+
+      <div class="metric-pill priority-pill" [ngClass]="{
+        'priority-high': callResult.priority === 'high',
+        'priority-medium': callResult.priority === 'medium',
+        'priority-low': callResult.priority === 'low'
+      }">
+        <mat-icon>flag</mat-icon>
+        <div>
+          <span class="metric-label">Priority</span>
+          <span class="metric-value">{{ callResult.priority | titlecase }}</span>
         </div>
       </div>
-      <div class="row">
-        <div class="label">Follow Up</div>
-        <div class="value">
-          <mat-chip [color]="callResult.follow_up_required ? 'warn' : 'primary'">
-            {{ callResult.follow_up_required ? 'Required' : 'Not Required' }}
-          </mat-chip>
+
+      <div class="metric-pill resolution-pill" [ngClass]="{
+        'resolution-resolved': callResult.resolution_status === 'resolved',
+        'resolution-unresolved': callResult.resolution_status !== 'resolved'
+      }">
+        <mat-icon>check_circle</mat-icon>
+        <div>
+          <span class="metric-label">Resolution</span>
+          <span class="metric-value">{{ callResult.resolution_status | titlecase }}</span>
         </div>
       </div>
-      <div class="row">
-        <div class="label">Processed At</div>
-        <div class="value">{{ callResult.processed_at | date:'medium' }}</div>
-      </div>
-      <div class="row">
-        <div class="label">Tags</div>
-        <div class="value">
-          <mat-chip-listbox>
-            <mat-chip *ngFor="let tag of callResult.tags">{{ tag }}</mat-chip>
-          </mat-chip-listbox>
+
+      <div class="metric-pill followup-pill" [ngClass]="{
+        'followup-required': callResult.follow_up_required,
+        'followup-not-required': !callResult.follow_up_required
+      }">
+        <mat-icon>{{ callResult.follow_up_required ? 'notifications_active' : 'notifications_off' }}</mat-icon>
+        <div>
+          <span class="metric-label">Follow Up</span>
+          <span class="metric-value">{{ callResult.follow_up_required ? 'Required' : 'Not Required' }}</span>
         </div>
       </div>
     </div>
 
-    <mat-divider></mat-divider>
+    <!-- Tags Section -->
+    <div class="tags-section">
+      <h4 class="section-subtitle">
+        <mat-icon>label</mat-icon>
+        Tags
+      </h4>
+      <div class="tags-container">
+        <mat-chip *ngFor="let tag of callResult.tags" class="tag-chip">{{ tag }}</mat-chip>
+      </div>
+    </div>
 
-    <h3>Summary</h3>
-    <mat-list>
-      <mat-list-item *ngFor="let item of callResult.summary">
-        <mat-icon matListIcon>arrow_right</mat-icon>
-        <span matLine>{{ item }}</span>
-      </mat-list-item>
-    </mat-list>
+    <mat-divider class="section-divider"></mat-divider>
 
-    <h3>Action Items</h3>
-    <mat-list>
-      <mat-list-item *ngFor="let item of callResult.action_items">
-        <mat-icon matListIcon>check_circle</mat-icon>
-        <span matLine>{{ item }}</span>
-      </mat-list-item>
-    </mat-list>
+    <!-- Summary Section -->
+    <div class="content-section">
+      <h3 class="content-title">
+        <mat-icon>summarize</mat-icon>
+        Summary
+      </h3>
+      <div class="summary-list">
+        <div *ngFor="let item of callResult.summary" class="summary-item">
+          <mat-icon class="summary-icon">arrow_forward</mat-icon>
+          <span>{{ item }}</span>
+        </div>
+      </div>
+    </div>
 
-    <h3>Customer Requests</h3>
-    <mat-list>
-      <mat-list-item *ngFor="let item of callResult.customer_requests">
-        <mat-icon matListIcon>person</mat-icon>
-        <span matLine>{{ item }}</span>
-      </mat-list-item>
-    </mat-list>
+    <!-- Action Items Section -->
+    <div class="content-section">
+      <h3 class="content-title">
+        <mat-icon>task_alt</mat-icon>
+        Action Items
+      </h3>
+      <div class="action-items-list">
+        <div *ngFor="let item of callResult.action_items" class="action-item">
+          <mat-icon class="action-icon">check_circle</mat-icon>
+          <span>{{ item }}</span>
+        </div>
+      </div>
+    </div>
 
-    <h3>Agent Performance</h3>
-    <p>{{ callResult.agent_performance }}</p>
+    <!-- Customer Requests Section -->
+    <div class="content-section">
+      <h3 class="content-title">
+        <mat-icon>person</mat-icon>
+        Customer Requests
+      </h3>
+      <div class="requests-list">
+        <div *ngFor="let item of callResult.customer_requests" class="request-item">
+          <mat-icon class="request-icon">chat_bubble</mat-icon>
+          <span>{{ item }}</span>
+        </div>
+      </div>
+    </div>
 
-    <div class="center-actions">
-      <button mat-raised-button color="primary" (click)="exportToPDF()">Export Analysis to PDF</button>
+    <!-- Agent Performance Section -->
+    <div class="content-section performance-section">
+      <h3 class="content-title">
+        <mat-icon>star</mat-icon>
+        Agent Performance
+      </h3>
+      <div class="performance-content">
+        <p>{{ callResult.agent_performance }}</p>
+      </div>
+    </div>
+
+    <div class="export-actions">
+      <button mat-raised-button color="primary" (click)="exportToPDF()" class="export-btn">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Export Analysis to PDF
+      </button>
     </div>
   </mat-card-content>
 </mat-card>
 
 <!-- Transcript Section -->
-<mat-card *ngIf="transcriptResult" class="cardWithShadow">
+<mat-card *ngIf="transcriptResult && parsedTranscript.length > 0" class="cardWithShadow transcript-card">
   <mat-card-content>
-    <mat-card-title>Transcript</mat-card-title>
-    <div class="transcript-meta">
-      <span><mat-icon>access_time</mat-icon> Duration: {{ transcriptResult.audio_duration | number:'1.0-0' }} sec</span>
-      <span><mat-icon>event</mat-icon> Processed: {{ transcriptResult.processed_at | date:'medium' }}</span>
+    <div class="transcript-header">
+      <div>
+        <mat-card-title class="section-title">
+          <mat-icon>transcribe</mat-icon>
+          Call Transcript
+        </mat-card-title>
+        <div class="transcript-meta">
+          <div class="meta-item">
+            <mat-icon>access_time</mat-icon>
+            <span>Duration: {{ transcriptResult.audio_duration | number:'1.0-0' }} sec</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>event</mat-icon>
+            <span>Processed: {{ transcriptResult.processed_at | date:'medium' }}</span>
+          </div>
+        </div>
+      </div>
+      <button mat-icon-button color="primary" (click)="exportTranscriptToPDF()" matTooltip="Export Transcript to PDF">
+        <mat-icon>download</mat-icon>
+      </button>
     </div>
-    <div class="transcript-box">
-      <pre>{{ transcriptResult.transcript }}</pre>
+
+    <div class="transcript-container">
+      <div *ngFor="let msg of parsedTranscript" class="transcript-message" 
+           [ngClass]="{'agent-message': msg.speaker === 'Agent', 'customer-message': msg.speaker === 'Customer'}">
+        <div class="message-header">
+          <div class="speaker-info">
+            <mat-icon class="speaker-icon" [ngClass]="{
+              'agent-icon': msg.speaker === 'Agent',
+              'customer-icon': msg.speaker === 'Customer'
+            }">
+              {{ msg.speaker === 'Agent' ? 'support_agent' : 'person' }}
+            </mat-icon>
+            <span class="speaker-name">{{ msg.speaker }}</span>
+          </div>
+          <span class="message-time">{{ msg.time }}</span>
+        </div>
+        <div class="message-content">
+          <p>{{ msg.message }}</p>
+        </div>
+      </div>
     </div>
-    <div class="center-actions">
-      <button mat-raised-button color="primary" (click)="exportTranscriptToPDF()">Export Transcript to PDF</button>
+
+    <div class="export-actions">
+      <button mat-raised-button color="primary" (click)="exportTranscriptToPDF()" class="export-btn">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Export Transcript to PDF
+      </button>
     </div>
   </mat-card-content>
 </mat-card>
